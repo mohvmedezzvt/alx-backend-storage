@@ -48,7 +48,6 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @lru_cache(maxsize=None)
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Generates a random key (UUID)
