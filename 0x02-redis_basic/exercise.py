@@ -17,7 +17,6 @@ def count_calls(method: callable) -> callable:
     Returns:
         callable: A wrapper function that counts the number of calls.
     """
-    key = method.__qualname__
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
