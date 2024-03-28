@@ -39,6 +39,40 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """
+    Stores the history of inputs and outputs for a method.
+
+    Args:
+        method (callable): The method to store the history.
+
+    Returns:
+        callable: A wrapper function that stores the history.
+    """
+
+    key = method.__qualname__
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """
+        Wrapper function that stores the history.
+
+        Args:
+            self: The instance of the class.
+            *args: The arguments passed to the method.
+            **kwargs: The keyword arguments passed to the method.
+
+        Returns:
+            The result of the method.
+        """
+        self._redis.rpush(f"{key}:inputs", str(args))
+        result = method(self, *args, **kwargs)
+        self._redis.rpush(f"{key}:outputs", str(result))
+        return result
+
+    return wrapper
+
+
 class Cache:
     """ Cache class """
     def __init__(self):
@@ -50,6 +84,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Generates a random key (UUID)
