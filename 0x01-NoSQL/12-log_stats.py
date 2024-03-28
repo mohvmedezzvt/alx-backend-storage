@@ -2,9 +2,10 @@
 """ 12-log_stats """
 
 from pymongo import MongoClient
+from typing import Tuple, Dict
 
 
-def log_stats(mongo_collection) -> None:
+def log_stats(mongo_collection) -> Tuple[int, Dict[str, int], int]:
     """
     Log stats from a MongoDB collection.
 
@@ -12,14 +13,14 @@ def log_stats(mongo_collection) -> None:
         mongo_collection (pymongo.collection.Collection):
         The MongoDB collection to log stats from.
     """
-    total_logs = mongo_collection.count_documents({})
+    total_logs: int = mongo_collection.count_documents({})
 
-    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    method_count = {method: mongo_collection.count_documents(
+    methods: Tuple[str, ...] = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    method_count: Dict[str, int] = {method: mongo_collection.count_documents(
         {"method": method}) for method in methods}
 
-    status_count = mongo_collection.count_documents({"method": "GET",
-                                                     "path": "/status"})
+    status_count: int = mongo_collection.count_documents({"method": "GET",
+                                                          "path": "/status"})
 
     return total_logs, method_count, status_count
 
