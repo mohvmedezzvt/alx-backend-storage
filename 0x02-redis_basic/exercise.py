@@ -3,11 +3,11 @@
 
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable
 from functools import wraps, lru_cache
 
 
-def count_calls(method: callable) -> callable:
+def count_calls(method: Callable) -> Callable:
     """
     Counts the number of times a method is called.
 
@@ -65,7 +65,7 @@ class Cache:
         return key
 
     def get(
-        self, key: str, fn: Union[callable, None] = None
+        self, key: str, fn: Union[Callable, None] = None
     ) -> Union[str, bytes, int, float]:
         """
         Retrieves the data stored in Redis identified by key.
