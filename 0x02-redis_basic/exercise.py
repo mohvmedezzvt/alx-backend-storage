@@ -4,7 +4,7 @@
 import redis
 import uuid
 from typing import Union
-from functools import wraps
+from functools import wraps, lru_cache
 
 
 def count_calls(method: callable) -> callable:
@@ -48,6 +48,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @lru_cache(maxsize=None)
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Generates a random key (UUID)
